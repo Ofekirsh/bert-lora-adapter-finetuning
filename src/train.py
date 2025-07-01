@@ -1,6 +1,6 @@
 # src/train.py
 import pytorch_lightning as pl
-from src.model.peft_model import get_model
+from model.model import get_model
 from src.model.lightning_model import LightningPEFTModel
 from src.utils.logger import ExperimentLogger
 from src.utils.seed import set_seed
@@ -15,6 +15,9 @@ def train_one_run(run_id, seed=42):
     train_loader, val_loader = get_dataloaders(tokenized_dataset, tokenizer)
 
     peft_model = get_model()
+    print(peft_model.config)
+    print(peft_model)
+
     logger = ExperimentLogger(run_name=run_name)
     model = LightningPEFTModel(peft_model, logger)
 
@@ -23,6 +26,7 @@ def train_one_run(run_id, seed=42):
         logger=False,
         enable_checkpointing=False,
         enable_model_summary=False,
+        strategy='ddp_find_unused_parameters_true',
     )
 
     trainer.fit(model, train_loader, val_loader)

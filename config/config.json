@@ -1,5 +1,5 @@
 {
-  "method": "lora",
+  "method": "houlsby",
   "lora": {
     "r": 8,
     "alpha": 16,
@@ -7,9 +7,12 @@
     "bias": "none",
     "task_type": "SEQ_CLS"
   },
-  "adapter": {
+  "prefix_tuning": {
     "num_virtual_tokens": 20,
     "task_type": "SEQ_CLS"
+  },
+  "houlsby": {
+    "leave_out": [1,2,3,4,5]
   },
   "model_name": "bert-base-uncased",
   "num_labels": 2
