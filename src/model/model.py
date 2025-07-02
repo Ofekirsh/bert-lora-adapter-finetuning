@@ -11,6 +11,13 @@ config_path = Path(__file__).resolve().parents[2] / "config" / "config.json"
 with open(config_path, "r") as f:
     CONFIG = json.load(f)
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+# Count total parameters
+def count_total_parameters(model):
+    return sum(p.numel() for p in model.parameters())
+
 
 def get_model():
     """
@@ -58,7 +65,7 @@ def get_model():
         
         # Add Houlsby adapter configuration
         adapter_config = AdapterPlusConfig.load(
-            "houlsby",
+            "adapter+",
             leave_out=CONFIG["houlsby"]["leave_out"],
         )
         
