@@ -3,10 +3,10 @@ from pathlib import Path
 from transformers import BertForSequenceClassification
 from peft import get_peft_model, LoraConfig, PrefixTuningConfig, TaskType
 from adapters import BertAdapterModel
-from adapters.configuration import AdapterPlusConfig
+from adapters.configuration import AdapterPlusConfig, DoubleSeqBnConfig
             
 
-# Load config
+# Load configs
 config_path = Path(__file__).resolve().parents[2] / "config" / "config.json"
 with open(config_path, "r") as f:
     CONFIG = json.load(f)
@@ -43,6 +43,35 @@ def get_model():
         
         return get_peft_model(model, config)
     
+    elif method == "adapter+":
+
+        # Load the base model for sequence classification
+        model = BertAdapterModel.from_pretrained(
+            CONFIG["model_name"]
+        )
+        
+        # Add a classification head
+        model.add_classification_head(
+            "cola",
+            num_labels=CONFIG["num_labels"]
+        )
+        
+        # Add Houlsby adapter configuration
+        adapter_config = AdapterPlusConfig.load(
+            "houlsby",
+            leave_out=CONFIG["houlsby"]["leave_out"],
+        )
+        
+        # Add and activate the adapter
+        adapter_name = "cola_adapter"
+        model.add_adapter(adapter_name, config=adapter_config)
+        model.set_active_adapters(adapter_name)
+        
+        # Set the active head
+        model.active_head = "cola"
+        
+        return model
+    
     elif method == "houlsby":
         # Use adapters library for Houlsby bottleneck adapters
         
@@ -58,7 +87,7 @@ def get_model():
         )
         
         # Add Houlsby adapter configuration
-        adapter_config = AdapterPlusConfig.load(
+        adapter_config = DoubleSeqBnConfig.load(
             "houlsby",
             leave_out=CONFIG["houlsby"]["leave_out"],
         )
