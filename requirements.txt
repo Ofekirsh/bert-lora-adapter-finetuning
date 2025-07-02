@@ -1,6 +1,7 @@
 torch
 transformers
 peft
+adapters
 datasets
 scikit-learn
 pytorch_lightning
