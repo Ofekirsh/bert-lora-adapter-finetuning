@@ -4,7 +4,6 @@ from transformers import BertForSequenceClassification
 from peft import get_peft_model, LoraConfig, PrefixTuningConfig, TaskType
 from adapters import BertAdapterModel
 from adapters.configuration import AdapterPlusConfig, DoubleSeqBnConfig
-            
 
 # Load configs
 config_path = Path(__file__).resolve().parents[2] / "config" / "config.json"
@@ -47,7 +46,7 @@ def get_model():
                 num_virtual_tokens=CONFIG["prefix_tuning"]["num_virtual_tokens"],
                 task_type=task_type
             )
-        
+
         return get_peft_model(model, config)
     
     elif method == "adapter+":
@@ -64,11 +63,14 @@ def get_model():
         )
         
         # Add Houlsby adapter configuration
-        adapter_config = AdapterPlusConfig.load(
-            "adapter+",
-            leave_out=CONFIG["houlsby"]["leave_out"],
+        adapter_config = AdapterPlusConfig(
+
+            leave_out=CONFIG["adapter+"]["leave_out"],
         )
-        
+
+        with open("adapter_architecture.json", "w") as f:
+            json.dump(adapter_config.to_dict(), f, indent=2)
+
         # Add and activate the adapter
         adapter_name = "cola_adapter"
         model.add_adapter(adapter_name, config=adapter_config)
@@ -94,8 +96,7 @@ def get_model():
         )
         
         # Add Houlsby adapter configuration
-        adapter_config = DoubleSeqBnConfig.load(
-            "houlsby",
+        adapter_config = DoubleSeqBnConfig(
             leave_out=CONFIG["houlsby"]["leave_out"],
         )
         
@@ -103,7 +104,10 @@ def get_model():
         adapter_name = "cola_adapter"
         model.add_adapter(adapter_name, config=adapter_config)
         model.set_active_adapters(adapter_name)
-        
+
+        with open("adapter_architecture.json", "w") as f:
+            json.dump(adapter_config.to_dict(), f, indent=2)
+
         # Set the active head
         model.active_head = "cola"
         

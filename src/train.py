@@ -20,7 +20,7 @@ def train_one_run(run_id, seed=42):
     model = LightningPEFTModel(peft_model, logger)
 
     trainer = pl.Trainer(
-        max_epochs=10,
+        max_epochs=2,
         logger=False,
         enable_checkpointing=False,
         enable_model_summary=False,
@@ -28,11 +28,6 @@ def train_one_run(run_id, seed=42):
     )
 
     trainer.fit(model, train_loader, val_loader)
-
-    # Save the model after training
-    model_path = f"{run_name}_final.ckpt"
-    trainer.save_checkpoint(model_path)
-    print(f"Model saved to {model_path}")
 
     # Run classification examples on 5 sentences from CoLA
     example_sentences = [

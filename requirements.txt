@@ -4,6 +4,7 @@ peft
 adapters
 datasets
 scikit-learn
-pytorch_lightning
+pytorch-lightning
 matplotlib
 seaborn
+torchvision

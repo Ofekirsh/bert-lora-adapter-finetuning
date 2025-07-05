@@ -1,5 +1,5 @@
 {
-  "method": "houlsby",
+  "method": "adapter+",
   "lora": {
     "r": 8,
     "alpha": 16,
