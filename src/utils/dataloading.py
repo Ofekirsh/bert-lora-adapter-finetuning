@@ -37,5 +37,6 @@ def get_dataloaders(tokenized_dataset, tokenizer, batch_size=16):
     val_loader = DataLoader(tokenized_dataset["validation"], batch_size=batch_size, collate_fn=data_collator)
     return train_loader, val_loader
 
+
 if __name__ == '__main__':
     load_and_tokenize_cola()

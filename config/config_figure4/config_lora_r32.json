@@ -1,0 +1,12 @@
+{
+  "method": "lora",
+  "lora": {
+    "r": 32,
+    "alpha": 16,
+    "dropout": 0.1,
+    "bias": "none",
+    "task_type": "SEQ_CLS"
+  },
+  "model_name": "bert-base-uncased",
+  "num_labels": 2
+}

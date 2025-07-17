@@ -1,0 +1,9 @@
+{
+  "method": "adapter+",
+  "adapter+": {
+    "leave_out": [],
+    "reduction_factor": 8
+  },
+  "model_name": "bert-base-uncased",
+  "num_labels": 2
+}

@@ -106,6 +106,8 @@ class LightningPEFTModel(pl.LightningModule):
             "val_mcc": val_mcc,
             "val_accuracy": val_accuracy
         }
+        self.val_accuracy = val_accuracy
+        self.val_mcc = val_mcc
 
         # Clear accumulators
         self.val_losses.clear()
