@@ -1,0 +1,9 @@
+{
+  "method": "houlsby",
+  "houlsby": {
+    "leave_out": [0,1,2,3,4,5,6,7,8],
+    "reduction_factor": 64
+  },
+  "model_name": "bert-base-uncased",
+  "num_labels": 2
+}
