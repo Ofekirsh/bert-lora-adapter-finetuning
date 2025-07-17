@@ -1,5 +1,6 @@
 # src/train.py
 import random
+import argparse
 import pytorch_lightning as pl
 from model.model import get_model
 from src.model.lightning_model import LightningPEFTModel
@@ -90,7 +91,7 @@ def train_one_run(config_path, run_id=0, seed=42, train_loader=None, val_loader=
         results["leave_out"] = config[method]["leave_out"]
 
     # Save results
-    results_dir = Path("results")
+    results_dir = Path("../results")
     results_dir.mkdir(exist_ok=True)
     results_file = results_dir / f"{config_name}_seed{seed}_results.json"
 
@@ -100,19 +101,32 @@ def train_one_run(config_path, run_id=0, seed=42, train_loader=None, val_loader=
     print(f"\nResults saved to: {results_file}")
     return results
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run PEFT experiments")
+    parser.add_argument("--figure", type=str, choices=["figure4", "figure6"],
+                       required=True, help="Which figure to run experiments for")
+    return parser.parse_args()
 
 if __name__ == "__main__":
+
+    args = parse_args()
 
     tokenized_dataset, tokenizer = load_and_tokenize_cola("bert-base-uncased")
     train_loader, val_loader = get_dataloaders(tokenized_dataset, tokenizer)
 
-    # Set how many config files to run (change this number)
-    k = 7
+    # Set config directory and k based on figure argument
+    config_dir = Path(f"../config/config_{args.figure}")
 
-    config_dir = Path("../config")
+    # Set k based on figure type
+    if args.figure == "figure4":
+        k = 12
+    elif args.figure == "figure6":
+        k = 8
+
     config_files = list(config_dir.glob("config_*.json"))
     print(f"Found {len(config_files)} config files total")
     print(f"Running {k} random config files:")
+
     # Take k random files
     selected_configs = random.sample(config_files, k)
 
@@ -121,12 +135,20 @@ if __name__ == "__main__":
 
     print(f"\nStarting experiments...")
 
-    for i, config_file in enumerate(selected_configs):
-        try:
-            print(f"\n[{i + 1}/{k}] Running: {config_file.name}")
-            results = train_one_run(str(config_file), run_id=i, seed=42, train_loader=train_loader, val_loader=val_loader)
-            print(f"Completed: {config_file.stem}")
-        except Exception as e:
-            print(f"ERROR in {config_file}: {str(e)}")
+    seeds = [42, 43, 44, 45, 46]
 
-    print(f"\nFinished running {len(selected_configs)} experiments")
+    for seed in seeds:
+        print(f"\n{'=' * 80}")
+        print(f"STARTING SEED: {seed}")
+        print(f"{'=' * 80}")
+
+        for i, config_file in enumerate(selected_configs):
+            try:
+                print(f"\n[Seed {seed}] [{i + 1}/{k}] Running: {config_file.name}")
+                results = train_one_run(str(config_file), run_id=i, seed=seed,
+                                        train_loader=train_loader, val_loader=val_loader)
+                print(f"Completed: {config_file.stem} with seed {seed}")
+            except Exception as e:
+                print(f"ERROR in {config_file} with seed {seed}: {str(e)}")
+
+    print(f"\nFinished running {len(selected_configs)} experiments across {len(seeds)} seeds")
