@@ -19,7 +19,7 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def train_one_run(config_path, run_id=0, seed=42, train_loader=None, val_loader=None):
+def train_one_run(config_path, run_id=0, seed=42, train_loader=None, val_loader=None, figure="figure4"):
     set_seed(seed)
     # Load config
     with open(config_path, 'r') as f:
@@ -91,7 +91,7 @@ def train_one_run(config_path, run_id=0, seed=42, train_loader=None, val_loader=
         results["leave_out"] = config[method]["leave_out"]
 
     # Save results
-    results_dir = Path("../results")
+    results_dir = Path(f"../{figure}_results")
     results_dir.mkdir(exist_ok=True)
     results_file = results_dir / f"{config_name}_seed{seed}_results.json"
 
@@ -145,8 +145,12 @@ if __name__ == "__main__":
         for i, config_file in enumerate(selected_configs):
             try:
                 print(f"\n[Seed {seed}] [{i + 1}/{k}] Running: {config_file.name}")
-                results = train_one_run(str(config_file), run_id=i, seed=seed,
-                                        train_loader=train_loader, val_loader=val_loader)
+                results = train_one_run(str(config_file),
+                                        run_id=i,
+                                        seed=seed,
+                                        train_loader=train_loader,
+                                        val_loader=val_loader,
+                                        figure=args.figure)
                 print(f"Completed: {config_file.stem} with seed {seed}")
             except Exception as e:
                 print(f"ERROR in {config_file} with seed {seed}: {str(e)}")
