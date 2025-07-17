@@ -7,3 +7,4 @@ scikit-learn
 pytorch-lightning
 matplotlib
 seaborn
+torchvision

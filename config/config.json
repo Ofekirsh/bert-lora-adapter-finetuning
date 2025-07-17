@@ -1,5 +1,5 @@
 {
-  "method": "houlsby",
+  "method": "adapter+",
   "lora": {
     "r": 8,
     "alpha": 16,
@@ -12,6 +12,9 @@
     "task_type": "SEQ_CLS"
   },
   "houlsby": {
+    "leave_out": []
+  },
+  "adapter+": {
     "leave_out": [1,2,3,4,5]
   },
   "model_name": "bert-base-uncased",
