@@ -1,3 +1,21 @@
+# BERT LoRA & Adapter Fine-Tuning
+
+This repository contains the implementation of our experiments on parameter-efficient fine-tuning (PEFT) methods for adapting BERT to downstream task.
+[Read the paper](paper/bert_peft_paper.pdf)
+
+## Research Questions
+
+In this project, we investigated:
+
+1. Which PEFT method performs best (LoRA, Houlsby adapters, or Adapter+) in terms of **accuracy** and parameter efficiency on a binary classification task (CoLA dataset)?
+2. Do all transformer layers need adapters? Specifically, what happens if we remove adapters from lower layers?
+
+## Key Takeaways
+
+* Adapter+ is the most effective PEFT method for this binary classification task.
+* LoRA is stable but underperforms compared to adapters, even with similar parameter counts.
+* Layer ablation suggests that most gains come from higher transformer layers.
+
 # Running Instructions
 
 ## Setup
@@ -39,3 +57,6 @@ python figure6.py
 ```
 
 Output: Displays plots showing parameter efficiency comparison and layer ablation study results.
+
+
+
